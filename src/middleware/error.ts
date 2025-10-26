@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError, ApiResponse } from '@/types';
+import { ApiResponse } from '@/types';
 
 /**
  * Custom error class
@@ -24,7 +24,7 @@ export const errorHandler = (
   error: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   let statusCode = 500;
   let message = 'Internal Server Error';
@@ -83,7 +83,7 @@ export const errorHandler = (
   const response: ApiResponse = {
     success: false,
     message,
-    error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    error: process.env['NODE_ENV'] === 'development' ? error.message : undefined,
   };
 
   res.status(statusCode).json(response);
@@ -101,7 +101,7 @@ export const asyncHandler = (fn: Function) => {
 /**
  * 404 Not Found handler
  */
-export const notFound = (req: Request, res: Response, next: NextFunction): void => {
+export const notFound = (req: Request, _res: Response, next: NextFunction): void => {
   const error = new AppError(`Not found - ${req.originalUrl}`, 404);
   next(error);
 };

@@ -4,7 +4,7 @@ export interface IProduct extends Document {
   _id: string;
   title: string;
   description: string;
-  price: number;
+  price: string; // Formatted price string (e.g., "15.000.000 ₫")
   priceValue: number; // Numeric value for calculations
   currency: string;
   images: string[];
@@ -17,7 +17,7 @@ export interface IProduct extends Document {
   };
   material: string;
   year: number;
-  artistId: string;
+  artistId: mongoose.Types.ObjectId | string;
   artistName: string; // Denormalized for better query performance
   isAvailable: boolean;
   stock: number;

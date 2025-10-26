@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -14,6 +15,7 @@ import authRoutes from '@/routes/auth';
 import userRoutes from '@/routes/users';
 import productRoutes from '@/routes/products';
 import artistRoutes from '@/routes/artists';
+import categoryRoutes from '@/routes/categories';
 import cartRoutes from '@/routes/cart';
 import orderRoutes from '@/routes/orders';
 import uploadRoutes from '@/routes/upload';
@@ -79,7 +81,7 @@ class Server {
 
   private initializeRoutes(): void {
     // Health check endpoint
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req, res) => {
       res.status(200).json({
         success: true,
         message: 'Server is running',
@@ -93,12 +95,13 @@ class Server {
     this.app.use('/api/users', userRoutes);
     this.app.use('/api/products', productRoutes);
     this.app.use('/api/artists', artistRoutes);
+    this.app.use('/api/categories', categoryRoutes);
     this.app.use('/api/cart', cartRoutes);
     this.app.use('/api/orders', orderRoutes);
     this.app.use('/api/upload', uploadRoutes);
 
     // Root endpoint
-    this.app.get('/', (req, res) => {
+    this.app.get('/', (_req, res) => {
       res.status(200).json({
         success: true,
         message: 'Welcome to Aesthetic Artefacts API',

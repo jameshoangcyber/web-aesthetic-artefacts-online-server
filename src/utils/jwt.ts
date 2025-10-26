@@ -8,7 +8,7 @@ export class JwtService {
    */
   static generateAccessToken(payload: { userId: string; email: string; role: string }): string {
     return jwt.sign(payload, config.jwtSecret, {
-      expiresIn: config.jwtExpire,
+      expiresIn: config.jwtExpire as any,
     });
   }
 
@@ -17,7 +17,7 @@ export class JwtService {
    */
   static generateRefreshToken(payload: { userId: string; email: string; role: string }): string {
     return jwt.sign(payload, config.jwtRefreshSecret, {
-      expiresIn: config.jwtRefreshExpire,
+      expiresIn: config.jwtRefreshExpire as any,
     });
   }
 

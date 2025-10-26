@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   _id: string;
@@ -100,16 +101,23 @@ userSchema.index({ role: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Instance methods
-userSchema.methods.getFullName = function(): string {
-  return `${this.firstName} ${this.lastName}`;
+userSchema.methods['getFullName'] = function(): string {
+  return `${this['firstName']} ${this['lastName']}`;
 };
 
 // Pre-save middleware to hash password
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  // Check if already hashed (bcrypt hashes start with $2a$ or $2b$)
+  if (this.password.startsWith('$2a$') || this.password.startsWith('$2b$')) {
+    return next();
+  }
+  
+  // Only hash if password is modified or new
+  if (!this.isModified('password')) {
+    return next();
+  }
   
   try {
-    const bcrypt = await import('bcryptjs');
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -119,10 +127,9 @@ userSchema.pre('save', async function(next) {
 });
 
 // Instance method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+userSchema.methods['comparePassword'] = async function(candidatePassword: string): Promise<boolean> {
   try {
-    const bcrypt = await import('bcryptjs');
-    return await bcrypt.compare(candidatePassword, this.password);
+    return await bcrypt.compare(candidatePassword, this['password']);
   } catch (error) {
     throw new Error('Password comparison failed');
   }

@@ -3,9 +3,9 @@ import { config } from '@/config/config';
 
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.NODE_ENV === 'test' 
-      ? process.env.MONGODB_TEST_URI 
-      : process.env.MONGODB_URI;
+    const mongoURI = process.env['NODE_ENV'] === 'test' 
+      ? config.mongodbTestUri
+      : config.mongodbUri;
 
     if (!mongoURI) {
       throw new Error('MongoDB URI is not defined');

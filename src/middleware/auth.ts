@@ -1,14 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { User } from '@/models/User';
 import { JwtService } from '@/utils/jwt';
-import { AuthenticatedRequest, AppError } from '@/types';
+import { AuthenticatedRequest } from '@/types';
+import { AppError } from '@/middleware/error';
 
 /**
  * Authentication middleware to verify JWT token
  */
 export const authenticate = async (
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -21,8 +22,8 @@ export const authenticate = async (
     }
 
     // Get token from cookies as fallback
-    if (!token && req.cookies?.accessToken) {
-      token = req.cookies.accessToken;
+    if (!token && req.cookies?.['accessToken']) {
+      token = req.cookies['accessToken'];
     }
 
     if (!token) {
@@ -60,7 +61,7 @@ export const authenticate = async (
  */
 export const optionalAuth = async (
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -73,8 +74,8 @@ export const optionalAuth = async (
     }
 
     // Get token from cookies as fallback
-    if (!token && req.cookies?.accessToken) {
-      token = req.cookies.accessToken;
+    if (!token && req.cookies?.['accessToken']) {
+      token = req.cookies['accessToken'];
     }
 
     if (token) {
@@ -101,7 +102,7 @@ export const optionalAuth = async (
  * Authorization middleware to check user roles
  */
 export const authorize = (...roles: string[]) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     if (!req.user) {
       next(new AppError('Access denied. Please authenticate first.', 401));
       return;
@@ -120,7 +121,7 @@ export const authorize = (...roles: string[]) => {
  * Middleware to check if user owns the resource
  */
 export const checkOwnership = (resourceUserIdField: string = 'userId') => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     if (!req.user) {
       next(new AppError('Access denied. Please authenticate first.', 401));
       return;
@@ -147,7 +148,7 @@ export const checkOwnership = (resourceUserIdField: string = 'userId') => {
 /**
  * Middleware to check if user is admin
  */
-export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const requireAdmin = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
   if (!req.user) {
     next(new AppError('Access denied. Please authenticate first.', 401));
     return;
@@ -164,7 +165,7 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
 /**
  * Middleware to check if user is artist or admin
  */
-export const requireArtistOrAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const requireArtistOrAdmin = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
   if (!req.user) {
     next(new AppError('Access denied. Please authenticate first.', 401));
     return;

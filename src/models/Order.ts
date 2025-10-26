@@ -13,12 +13,10 @@ export interface IOrderItem {
 export interface IOrder extends Document {
   _id: string;
   orderNumber: string;
-  userId: string;
+  userId: mongoose.Types.ObjectId | string;
   items: IOrderItem[];
   shippingAddress: {
-    firstName: string;
-    lastName: string;
-    email: string;
+    fullName: string;
     phone: string;
     street: string;
     city: string;
@@ -77,21 +75,10 @@ const orderItemSchema = new Schema({
 }, { _id: false });
 
 const shippingAddressSchema = new Schema({
-  firstName: {
+  fullName: {
     type: String,
-    required: [true, 'First name is required'],
+    required: [true, 'Full name is required'],
     trim: true,
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Last name is required'],
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    trim: true,
-    lowercase: true,
   },
   phone: {
     type: String,

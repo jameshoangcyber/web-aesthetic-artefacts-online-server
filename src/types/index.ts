@@ -11,7 +11,7 @@ export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
   data?: T;
-  error?: string;
+  error?: string | undefined;
   pagination?: PaginationInfo;
 }
 
@@ -164,11 +164,8 @@ export interface FileUploadRequest {
   path: string;
 }
 
-// Error types
-export interface AppError extends Error {
-  statusCode: number;
-  isOperational: boolean;
-}
+// Error types - Now using class from middleware/error.ts
+// AppError class is defined in middleware/error.ts to avoid circular dependency
 
 // JWT payload
 export interface JwtPayload {

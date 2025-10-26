@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ICartItem {
   productId: string;
+  product?: any; // Populated product data
   quantity: number;
   price: number;
   addedAt: Date;
@@ -9,7 +10,7 @@ export interface ICartItem {
 
 export interface ICart extends Document {
   _id: string;
-  userId: string;
+  userId: mongoose.Types.ObjectId | string;
   items: ICartItem[];
   totalItems: number;
   totalPrice: number;
@@ -69,8 +70,8 @@ cartSchema.index({ userId: 1 });
 
 // Pre-save middleware to calculate totals
 cartSchema.pre('save', function(next) {
-  this.totalItems = this.items.reduce((total, item) => total + item.quantity, 0);
-  this.totalPrice = this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  this.totalItems = this.items.reduce((total: number, item: ICartItem) => total + item.quantity, 0);
+  this.totalPrice = this.items.reduce((total: number, item: ICartItem) => total + (item.price * item.quantity), 0);
   next();
 });
 
